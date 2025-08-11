@@ -95,9 +95,7 @@ const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, i
           animationFrameId.current = requestAnimationFrame(animate);
         } else {
           setCurrentRotation(targetRotation);
-          if (winner) {
-            onSpinEndRef.current(winner);
-          }
+          onSpinEndRef.current();
         }
       };
 

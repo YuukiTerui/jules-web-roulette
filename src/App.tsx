@@ -3,6 +3,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import { RouletteData, RouletteItem } from './types';
 import RouletteCanvas from './components/RouletteCanvas';
 import SavedRoulettesModal from './components/SavedRoulettesModal';
+import ControlPanel from './components/ControlPanel';
 import styles from './App.module.css';
 
 const createNewRoulette = (title: string): RouletteData => ({
@@ -96,7 +97,8 @@ function App() {
 
   const handleDeleteRoulette = (id: string) => {
     if (roulettes.length <= 1) {
-      alert('最後のルーレットは削除できません。');
+      // This could be a more user-friendly notification
+      console.warn('The last roulette cannot be deleted.');
       return;
     }
     setRoulettes(roulettes.filter(r => r.id !== id));
@@ -150,40 +152,14 @@ function App() {
             </button>
           </div>
 
-          <div className={styles.controlsSection}>
-            <h2>コントロールパネル</h2>
-            <input
-              type="text"
-              value={currentRoulette.title}
-              onChange={handleTitleChange}
-              className={styles.titleInput}
-              placeholder="ルーレットのタイトル"
-            />
-            {currentRoulette.items.length > 0 ? (
-              <ul className={styles.itemList}>
-                {currentRoulette.items.map((item) => (
-                  <li key={item.id}>
-                    <span>{item.name}</span>
-                    <button onClick={() => handleDeleteItem(item.id)}>削除</button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.noItemsMessage}>
-                項目を追加してルーレットを始めましょう！
-              </p>
-            )}
-            <div className={styles.addItemForm}>
-              <input
-                type="text"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-                placeholder="新しい項目"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-              />
-              <button onClick={handleAddItem}>追加</button>
-            </div>
-          </div>
+          <ControlPanel
+            roulette={currentRoulette}
+            newItemName={newItemName}
+            onTitleChange={handleTitleChange}
+            onNewItemNameChange={(e) => setNewItemName(e.target.value)}
+            onAddItem={handleAddItem}
+            onDeleteItem={handleDeleteItem}
+          />
         </main>
       </div>
     </>
