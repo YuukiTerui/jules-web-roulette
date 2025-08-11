@@ -7,15 +7,21 @@ interface RouletteCanvasProps {
   height: number;
   isSpinning: boolean;
   targetRotation: number;
+  winner: RouletteItem | null;
   onSpinEnd: () => void;
 }
 
 const COLORS = ["#FFC107", "#FF9800", "#FF5722", "#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39", "#FFEB3B"];
 
-const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, isSpinning, targetRotation, onSpinEnd }) => {
+const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, isSpinning, targetRotation, winner, onSpinEnd }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentRotation, setCurrentRotation] = useState(0);
   const animationFrameId = useRef<number | null>(null);
+  const onSpinEndRef = useRef(onSpinEnd);
+
+  useEffect(() => {
+    onSpinEndRef.current = onSpinEnd;
+  }, [onSpinEnd]);
 
   const drawRoulette = (rotation: number) => {
     const canvas = canvasRef.current;
@@ -79,7 +85,6 @@ const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, i
         const elapsedTime = Date.now() - startTime;
         const progress = Math.min(elapsedTime / duration, 1);
 
-        // Ease-out quint function
         const easeOutQuint = (x: number): number => 1 - Math.pow(1 - x, 5);
         const easedProgress = easeOutQuint(progress);
 
@@ -89,13 +94,13 @@ const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, i
           setCurrentRotation(newRotation);
           animationFrameId.current = requestAnimationFrame(animate);
         } else {
-          // Ensure final rotation is exactly the target
           setCurrentRotation(targetRotation);
-          onSpinEnd();
+          if (winner) {
+            onSpinEndRef.current(winner);
+          }
         }
       };
 
-      // Reset rotation before starting a new spin to ensure smooth animation from the start
       setCurrentRotation(currentRotation % 360);
       animationFrameId.current = requestAnimationFrame(animate);
     }
@@ -106,10 +111,9 @@ const RouletteCanvas: React.FC<RouletteCanvasProps> = ({ items, width, height, i
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSpinning, targetRotation, onSpinEnd]);
+  }, [isSpinning, targetRotation, winner]);
 
   useEffect(() => {
-      // Keep rotation at 0 when there are no items
       if (items.length === 0) {
           setCurrentRotation(0);
       }

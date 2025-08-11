@@ -60,7 +60,7 @@ function App() {
 
   const handleStartSpin = () => {
     if (!currentRoulette || currentRoulette.items.length < 2) {
-      alert('項目を2つ以上追加してください。');
+      console.warn('項目を2つ以上追加してください。');
       return;
     }
     const winnerIndex = Math.floor(Math.random() * currentRoulette.items.length);
@@ -78,10 +78,15 @@ function App() {
     setIsSpinning(true);
   };
 
-  const handleSpinEnd = (theWinner: RouletteItem) => {
+  const handleSpinEnd = () => {
     setIsSpinning(false);
-    setResult(theWinner);
   };
+
+  useEffect(() => {
+    if (!isSpinning && winner) {
+      setResult(winner);
+    }
+  }, [isSpinning, winner]);
 
   // Modal handlers
   const handleSelectRoulette = (id: string) => {
@@ -135,7 +140,7 @@ function App() {
               isSpinning={isSpinning}
               targetRotation={targetRotation}
               winner={winner}
-              onSpinEnd={handleSpinEnd}
+              onSpinEnd={() => handleSpinEnd()}
             />
             <p className={styles.resultArea} data-testid="result-area">
               {isSpinning ? '回転中...' : result ? `結果: ${result.name}` : '結果表示エリア'}
