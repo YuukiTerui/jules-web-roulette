@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Roulette</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Web Roulette</h1>
+    <div class="roulette-container">
+        <canvas id="roulette-canvas" width="400" height="400"></canvas>
+        <button id="spin-button">Spin</button>
+    </div>
+
+    <div class="controls">
+        <label>
+            <input type="checkbox" id="chained-mode-checkbox">
+            Chained Roulette Mode
+        </label>
+    </div>
+
+    <div class="daily-schedule">
+        <h2>Daily Schedule</h2>
+        <p>Current Time: <span id="current-time"></span></p>
+        <p>Next Action: <span id="next-action"></span></p>
+        <div id="schedule-display"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
